@@ -56,6 +56,7 @@ function action() {
 
     if ( (actionMessage.value == "Reset Board" && !winner) || actionMessage.value == "Play Again") {
         resetBoard(3);
+        winner = null;
     }
 }
 
@@ -64,8 +65,6 @@ function onWin() {
     setTimeout(() => {
         alert(winner + " wins!");
         actionMessage.value = "Play Again";
-        resetBoard(3);
-        winner = null;
     }, 1000);
 }
 

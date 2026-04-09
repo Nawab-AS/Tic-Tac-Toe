@@ -1,7 +1,6 @@
 # Tic-Tac-Toe
 
 A simple web tic-tac-toe game with an intergrated AI (Min-Max Algorithm).
-The purpose of this project was to see how fast I could create a simple tic-tac-toe game.
 
 **No AI was used in the making of this project.**
 

@@ -1,3 +1,7 @@
+[v-cloak] {
+    display: none;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f0f0;
@@ -12,7 +16,7 @@ body {
     width: 100vw;
 }
 
-.container {
+#container {
     width: max-content;
     padding: 2rem;
     border: 3px solid #222;

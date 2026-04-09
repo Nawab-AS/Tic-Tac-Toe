@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
     <script src="./index.js" defer></script>
 </head>
 <body>
-    <div class="container">
+    <div id="container" v-cloak>
         <h1>Tic-Tac-Toe</h1>
         <p>Welcome to Tic-Tac-Toe!</p>
         
@@ -24,20 +25,10 @@
         
         <table>
             <tbody id="board">
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                <tr v-for="(row, rowIndex) in board" :key="rowIndex">
+                    <td v-for="(cell, colIndex) in row" :key="colIndex" @click="makeMove(rowIndex, colIndex)">
+                        {{ cell }}
+                    </td>
                 </tr>
             </tbody>
         </table>

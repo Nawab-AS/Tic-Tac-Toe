@@ -20,4 +20,4 @@ createApp({
             makeMove
         }
     }
-}).mount("body");
+}).mount("#app");

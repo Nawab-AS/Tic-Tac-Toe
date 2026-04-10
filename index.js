@@ -3,6 +3,7 @@ const { createApp, ref } = Vue;
 const table = document.getElementById('board').children;
 var board = ref([]); // set empty board
 let winner = null;
+let winningCells = ref([]);
 let actionMessage = ref("");
 
 let currentPlayer = "X";
@@ -30,16 +31,20 @@ function makeMove(row, col) {
 function checkWin() {
     for (let i = 0; i < 3; i++) {
         if (board.value[i][0] && board.value[i][0] == board.value[i][1] && board.value[i][1] == board.value[i][2]) {
+            winningCells.value = [[i, 0], [i, 1], [i, 2]];
             return board.value[i][0];
         }
         if (board.value[0][i] && board.value[0][i] == board.value[1][i] && board.value[1][i] == board.value[2][i]) {
+            winningCells.value = [[0, i], [1, i], [2, i]];
             return board.value[0][i];
         }
     }
     if (board.value[0][0] && board.value[0][0] == board.value[1][1] && board.value[1][1] == board.value[2][2]) {
+        winningCells.value = [[0, 0], [1, 1], [2, 2]];
         return board.value[0][0];
     }
     if (board.value[0][2] && board.value[0][2] == board.value[1][1] && board.value[1][1] == board.value[2][0]) {
+        winningCells.value = [[0, 2], [1, 1], [2, 0]];
         return board.value[0][2];
     }
 
@@ -57,6 +62,7 @@ function action() {
     if ( (actionMessage.value == "Reset Board" && !winner) || actionMessage.value == "Play Again") {
         resetBoard(3);
         winner = null;
+        winningCells.value = [];
     }
 }
 
@@ -76,6 +82,7 @@ createApp({
             makeMove,
             action,
             actionMessage,
+            winningCells,
         }
     }
 }).mount("#app");

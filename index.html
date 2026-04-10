@@ -28,7 +28,7 @@
                 <tbody id="board">
                     <tr v-for="(row, rowIndex) in board" :key="rowIndex">
                         <td v-for="(cell, colIndex) in row" :key="colIndex" @click="makeMove(rowIndex, colIndex)">
-                            {{ cell }}
+                            <span :class="[cell == 'X' ? 'x' : (cell == 'O' ? 'o' : ''), winningCells.some(([r, c]) => r == rowIndex && c == colIndex) ? 'winningCell' : '']">{{ cell }}</span>
                         </td>
                     </tr>
                 </tbody>

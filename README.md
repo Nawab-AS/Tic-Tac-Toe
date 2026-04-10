@@ -7,6 +7,7 @@ A simple web tic-tac-toe game with an intergrated AI (Min-Max Algorithm).
 # Features
  - Tic-tac-toe using min-max
  - Ability to start as X or O
+ - Reactive 'action' button
 
 # Tech Stack
-Plain vanilla HTML + JS + CSS
+Vue CDN and HTML + JS + CSS

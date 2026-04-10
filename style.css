@@ -63,18 +63,28 @@ table {
     border-collapse: separate;
 }
 
-tr {
-    height: 50px;
-}
 
 td {
     width: 50px;
-    text-align: center;
+    height: 50px;
     font-size: 20px;
-    font-weight: bold;
     border: 1px solid #222;
     border-radius: 5px;
+    padding: 0px;
+    text-align: center;
 }
+
+td>span {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 20px;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+}
+td>span.winningCell { font-size: 30px; }
+
+.x { color: hsl(0, 54%, 45%) }
+.o { color: hsl(240, 54%, 45%); }
 
 
 button#action {

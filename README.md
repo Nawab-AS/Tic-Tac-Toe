@@ -5,7 +5,10 @@ A simple web tic-tac-toe game with an intergrated AI (MiniMax Algorithm).
 **No AI was used in the making of this project.**
 
 # Features
- - Tic-tac-toe using the minimax algorithm [(learn more here)](https://www.geeksforgeeks.org/dsa/minimax-algorithm-in-game-theory-set-1-introduction)
+ - Tic-tac-toe AI
+    - Uses the Minimax algorithm [(learn more here)](https://www.geeksforgeeks.org/dsa/minimax-algorithm-in-game-theory-set-1-introduction)
+    - Automatically optimizes search depth via Aplha-Beta Pruning
+ - Customizable board size
  - Ability to start as X or O
  - Reactive 'action' button
 

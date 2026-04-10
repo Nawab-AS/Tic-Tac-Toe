@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./style.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
     <script src="./index.js" defer></script>
+    <script src="./miniMax.js" defer></script>
 </head>
 <body>
     <div id="app">
@@ -15,7 +16,7 @@
             
             <div class="option">
                 <p>AI Difficulty</p>
-                <select name="" id="">
+                <select name="" @change="changeDifficulty()" v-model="difficulty">
                     <option value="two-player">Two Players</option>
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>

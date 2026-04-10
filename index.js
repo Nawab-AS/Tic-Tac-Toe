@@ -2,7 +2,7 @@ const { createApp, ref } = Vue;
 
 const table = document.getElementById('board').children;
 var board = ref([]); // set empty board
-let winner = null;
+let winner = ref(null);
 let winningCells = ref([]);
 let actionMessage = ref("");
 
@@ -15,7 +15,7 @@ function resetBoard(size) {
 resetBoard(3); // initialize board
 
 function makeMove(row, col) {
-    if (winner) return;
+    if (winner.value) return;
 
     actionMessage.value = "Reset Board";
 
@@ -24,8 +24,8 @@ function makeMove(row, col) {
         currentPlayer = currentPlayer == "X" ? "O" : "X";
     }
 
-    winner = checkWin();
-    if (winner) onWin();
+    winner.value = checkWin();
+    if (winner.value) onWin();
 }
 
 function checkWin() {
@@ -59,9 +59,9 @@ function action() {
         return;
     }
 
-    if ( (actionMessage.value == "Reset Board" && !winner) || actionMessage.value == "Play Again") {
+    if ( (actionMessage.value == "Reset Board" && !winner.value) || actionMessage.value == "Play Again") {
         resetBoard(3);
-        winner = null;
+        winner.value = null;
         winningCells.value = [];
     }
 }
@@ -69,9 +69,9 @@ function action() {
 
 function onWin() {
     setTimeout(() => {
-        alert(winner + " wins!");
+        // alert(winner.value + " wins!");
         actionMessage.value = "Play Again";
-    }, 1000);
+    }, 500);
 }
 
 // Mount Vue
@@ -83,6 +83,7 @@ createApp({
             action,
             actionMessage,
             winningCells,
+            winner,
         }
     }
 }).mount("#app");

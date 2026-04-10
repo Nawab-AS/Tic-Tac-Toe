@@ -12,7 +12,6 @@
     <div id="app">
         <div id="container" v-cloak>
             <h1>Tic-Tac-Toe</h1>
-            <p>Welcome to Tic-Tac-Toe!</p>
             
             <div class="option">
                 <p>AI Difficulty</p>
@@ -24,15 +23,38 @@
                 </select>
             </div>
             
-            <table>
-                <tbody id="board">
-                    <tr v-for="(row, rowIndex) in board" :key="rowIndex">
-                        <td v-for="(cell, colIndex) in row" :key="colIndex" @click="makeMove(rowIndex, colIndex)">
-                            <span :class="[cell == 'X' ? 'x' : (cell == 'O' ? 'o' : ''), winningCells.some(([r, c]) => r == rowIndex && c == colIndex) ? 'winningCell' : '']">{{ cell }}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="boardArea">
+                <table>
+                    <tbody id="board">
+                        <tr v-for="(row, rowIndex) in board" :key="rowIndex">
+                            <td v-for="(cell, colIndex) in row" :key="colIndex" @click="makeMove(rowIndex, colIndex)">
+                                <span :class="[cell == 'X' ? 'x' : (cell == 'O' ? 'o' : ''), winningCells.some(([r, c]) => r == rowIndex && c == colIndex) ? 'winningCell' : '']">{{ cell }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div id="winAnim" v-if="winner">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <line :x1="`${(winningCells[0][1]+0.5) * 33}%`" :y1="`${(winningCells[0][0]+0.5) * 33}%`" x2="0" y2="0" :stroke="winner == 'X' ? 'hsl(0, 54%, 45%)' : 'hsl(240, 54%, 45%)'" stroke-width="5" stroke-linecap="round">
+                            <animate
+                                attributeName="x2"
+                                :from="`${(winningCells[0][1]+0.5) * 33}%`"
+                                :to="`${(winningCells[2][1]+0.5) * 33}%`"
+                                dur="0.3s"
+                                fill="freeze"
+                            />
+                            <animate
+                                attributeName="y2"
+                                :from="`${(winningCells[0][0]+0.5) * 33}%`"
+                                :to="`${(winningCells[2][0]+0.5) * 33}%`"
+                                dur="0.3s"
+                                fill="freeze"
+                            />
+                        </line>
+                    </svg>
+                </div>
+            </div>
 
             <button id="action" @click="action">{{ actionMessage }}</button>
         </div>

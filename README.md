@@ -13,17 +13,21 @@ A simple web tic-tac-toe game with an intergrated AI (MiniMax Algorithm).
 Vue CDN and HTML + JS + CSS
 
 # Usage
-Run with any static hosting package.
-Ensure to disable cache when running.
+Run with any static hosting package. Ensure to disable cache when running.
 
 1) Python
+Python comes built-in with a simple HTTP server. Run it with:
 ```bash
 python -m http.server
 ```
 
 2) Node js
+Create an HTTP server with the `http-server` npm package. Install with:
 ```bash
 npm install --global http-server
+```
+After installed, run with:
+```bash
 http-server -c-1
 ```
 

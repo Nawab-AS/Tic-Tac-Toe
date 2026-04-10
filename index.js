@@ -1,20 +1,22 @@
-const { createApp, ref } = Vue;
+const { createApp, ref, watch } = Vue;
 
-const table = document.getElementById('board').children;
-var board = ref([]); // set empty board
-let winner = ref(null);
-let winningCells = ref([]);
-let actionMessage = ref("");
-let difficulty = ref("two-player");
+const board = ref([]); // set empty board
+const winner = ref(null);
+const winningCells = ref([]);
+const actionMessage = ref("");
+const difficulty = ref("two-player");
+const gridSize = ref(3);
 
 let currentPlayer = "X";
 let aiPlayer = "O";
 
-function resetBoard(size) {
-    board.value = Array.from({ length: size }, () => Array(size).fill(""))
+function resetBoard() {
+    board.value = Array.from({ length: gridSize.value }, () => Array(gridSize.value).fill(""))
     actionMessage.value = "Start as O";
+    winningCells.value = [];
+    winner.value = null;
 }
-resetBoard(3); // initialize board
+resetBoard(); // initialize board
 
 function makeMove(row, col, isAiMove = false) {
     if (winner.value) return;
@@ -28,7 +30,7 @@ function makeMove(row, col, isAiMove = false) {
     board.value[row][col] = currentPlayer;
     currentPlayer = currentPlayer == "X" ? "O" : "X";
 
-    winner.value = checkWin();
+    winner.value = checkWin(board.value, true);
     if (winner.value) {
         onWin();
         return;
@@ -40,24 +42,74 @@ function makeMove(row, col, isAiMove = false) {
     }
 }
 
-function checkWin() {
-    for (let i = 0; i < 3; i++) {
-        if (board.value[i][0] && board.value[i][0] == board.value[i][1] && board.value[i][1] == board.value[i][2]) {
-            winningCells.value = [[i, 0], [i, 1], [i, 2]];
-            return board.value[i][0];
+cache = {};
+function checkWin(board, move) {
+    let cells, win;
+    for (let i = 0; i < board.length; i++) {
+        
+        // horizontal
+        win = true;
+        start = board[i][0];
+        cells = [];
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] != start) {
+                win = false;
+                break;
+            }
+            cells.push([i, j]);
         }
-        if (board.value[0][i] && board.value[0][i] == board.value[1][i] && board.value[1][i] == board.value[2][i]) {
-            winningCells.value = [[0, i], [1, i], [2, i]];
-            return board.value[0][i];
+        if (win && start) {
+            if (move) winningCells.value = cells;
+            return start;
+        }
+
+
+        // vertical
+        win = true;
+        start = board[0][i];
+        cells = [];
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[j][i] != start) {
+                win = false;
+                break;
+            }
+            cells.push([j, i]);
+        }
+        if (start && win) {
+            if (move) winningCells.value = cells;
+            return board[0][i];
         }
     }
-    if (board.value[0][0] && board.value[0][0] == board.value[1][1] && board.value[1][1] == board.value[2][2]) {
-        winningCells.value = [[0, 0], [1, 1], [2, 2]];
-        return board.value[0][0];
+
+    // diagonal top-left to bottom-right
+    win = true;
+    cells = [];
+    for (let i = 0; i < board.length; i++) {
+        cells.push([i, i]);
+        if (board[i][i] != board[0][0]) {
+            win = false;
+            break;
+        }
     }
-    if (board.value[0][2] && board.value[0][2] == board.value[1][1] && board.value[1][1] == board.value[2][0]) {
-        winningCells.value = [[0, 2], [1, 1], [2, 0]];
-        return board.value[0][2];
+    if (win && board[0][0]) {
+        if (move) winningCells.value = cells;
+        return board[0][0];
+    }
+
+
+    // diagonal top-right to bottom-left
+    win = true;
+    cells = [];
+    for (let i = 0; i < board.length; i++) {
+        cells.push([i, board.length - 1 - i]);
+        if (board[i][board.length - 1 - i] != board[0][board.length - 1]) {
+            win = false;
+            break;
+        }
+    }
+    if (win && board[0][board.length - 1]) {
+        if (move) winningCells.value = cells;
+        return board[0][board.length - 1];
     }
 
     return null;
@@ -89,7 +141,7 @@ function action() {
     }
 
     if ( (actionMessage.value == "Reset Board" && !winner.value) || actionMessage.value == "Play Again") {
-        resetBoard(3);
+        resetBoard();
         winner.value = null;
         currentPlayer = "X";
         if (difficulty.value != "two-player" && currentPlayer == aiPlayer) aiMove();
@@ -99,7 +151,7 @@ function action() {
 }
 
 function changeDifficulty() {
-    resetBoard(3);
+    resetBoard();
     winner.value = null;
     winningCells.value = [];
 }
@@ -111,6 +163,15 @@ function onWin() {
         actionMessage.value = "Play Again";
     }, 500);
 }
+
+const boardLength = ref(170);
+watch(gridSize, async () => {
+    await (new Promise(resolve => setTimeout(resolve, 100))); // apparently the nextTick is too fast for DOM updates?!
+    const boardElement = document.getElementById("board");
+    boardLength.value = boardElement.clientWidth;
+    console.log("Board length updated:", boardLength.value);
+}, { immediate: true });
+
 
 // Mount Vue
 createApp({
@@ -124,6 +185,9 @@ createApp({
             winner,
             difficulty,
             changeDifficulty,
+            gridSize,
+            resetBoard,
+            boardLength
         }
     }
 }).mount("#app");

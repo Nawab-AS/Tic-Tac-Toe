@@ -1,5 +1,5 @@
 function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infinity) {
-    const winner = checkWinner(board);
+    const winner = checkWin(board, false);
 
     if (winner === aiPlayer) return 10 - depth; // win
     if (winner && winner !== aiPlayer) return depth - 10; // loss
@@ -11,8 +11,8 @@ function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infin
     if (isMaxTurn) {
         let bestScore = -Infinity;
 
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
                 if (board[i][j] === "") {
                     board[i][j] = player;
                     const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta);
@@ -31,8 +31,8 @@ function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infin
 
     let bestScore = Infinity;
 
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === "") {
                 board[i][j] = player;
                 const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta);
@@ -49,24 +49,12 @@ function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infin
     return bestScore;
 }
 
-function checkWinner(board) {
-    for (let i = 0; i < 3; i++) {
-        if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) return board[i][0];
-        if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) return board[0][i];
-    }
-
-    if (board[0][0] && board[0][0] === board[1][1] && board[1][1] === board[2][2]) return board[0][0];
-    if (board[0][2] && board[0][2] === board[1][1] && board[1][1] === board[2][0]) return board[0][2];
-
-    return null;
-}
-
 function findBestMove(board, aiPlayer, stupidity = 0) {
     const humanPlayer = aiPlayer === "X" ? "O" : "X";
     let moves = {};
 
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] == "") {
                 board[i][j] = aiPlayer;
                 const score = minimax(board, 0, humanPlayer, aiPlayer);
@@ -82,7 +70,7 @@ function findBestMove(board, aiPlayer, stupidity = 0) {
     // get the 1-<stupidity>th unique best moves
     const uniqueScores = moves.map(entry => entry[1]).filter((score, index, self) => self.indexOf(score) === index);
     const selectedDifficulty = uniqueScores[Math.min(stupidity, uniqueScores.length - 1)];
-    moves = moves.filter(entry => entry[1] === selectedDifficulty); // filter moves that match the selected difficulty score
+    moves = moves.filter(entry => entry[1] === selectedDifficulty);
 
     moves = moves.map(entry => entry[0].split(",").map(Number)). // convert "i,j" back to [i, j]
         map(move => ({ row: move[0], col: move[1] })); // convert to {row, col} format

@@ -77,10 +77,15 @@ function findBestMove(board, aiPlayer, stupidity = 0) {
         }
     }
 
-    const bestMoves = Object.entries(moves).sort((a, b) => b[1] - a[1]) // sort scores from best to worst
-        .slice(0, stupidity + 1) // take the top (stupidity) moves
-        .map(entry => entry[0].split(",").map(Number)) // convert "i,j" back to [i, j]
-        .map(move => ({ row: move[0], col: move[1] })); // convert to {row, col} format
+    moves = Object.entries(moves).sort((a, b) => b[1] - a[1]); // sort scores from best to worst
 
-    return bestMoves[Math.floor(Math.random() * bestMoves.length)]; // randomly pick one of the best moves
+    // get the 1-<stupidity>th unique best moves
+    const uniqueScores = moves.map(entry => entry[1]).filter((score, index, self) => self.indexOf(score) === index);
+    const selectedDifficulty = uniqueScores[Math.min(stupidity, uniqueScores.length - 1)];
+    moves = moves.filter(entry => entry[1] === selectedDifficulty); // filter moves that match the selected difficulty score
+
+    moves = moves.map(entry => entry[0].split(",").map(Number)). // convert "i,j" back to [i, j]
+        map(move => ({ row: move[0], col: move[1] })); // convert to {row, col} format
+
+    return moves[Math.floor(Math.random() * moves.length)]; // randomly pick one of the allowed moves
 }

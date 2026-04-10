@@ -11,3 +11,21 @@ A simple web tic-tac-toe game with an intergrated AI (MiniMax Algorithm).
 
 # Tech Stack
 Vue CDN and HTML + JS + CSS
+
+# Usage
+Run with any static hosting package.
+Ensure to disable cache when running.
+
+1) Python
+```bash
+python -m http.server
+```
+
+2) Node js
+```bash
+npm install --global http-server
+http-server -c-1
+```
+
+3) VS Code `Live Server` extension
+Simply install from the extension marketplace and then click `Go Live` on the bottom toolbar

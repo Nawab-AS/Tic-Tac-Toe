@@ -129,7 +129,7 @@ function findBestMove(board, aiPlayer, stupidity = 0) {
     const humanPlayer = aiPlayer === "X" ? "O" : "X";
     const size = board.length;
     const maxDepth = size <= 3 ? size * size : (size === 4 ? 6 : (size === 5 ? 4 : 3));
-    const timeLimitMs = size <= 4 ? 500 : 120;
+    const timeLimitMs = 750;
     const deadline = Date.now() + timeLimitMs;
     const candidates = getCandidateMoves(board);
 

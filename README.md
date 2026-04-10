@@ -8,9 +8,10 @@ A simple web tic-tac-toe game with an intergrated AI (MiniMax Algorithm).
  - Tic-tac-toe AI
     - Uses the Minimax algorithm [(learn more here)](https://www.geeksforgeeks.org/dsa/minimax-algorithm-in-game-theory-set-1-introduction)
     - Automatically optimizes search depth via Aplha-Beta Pruning
+ - Customizable AI strength: easy, medium, hard
+    - Note: Due to Alpha-Beta Pruning, 'impossible' difficulty is infeasible for a browser and could lead up to evaluating 3.7x10^41 positions (6x6 board with depth of 35)
  - Customizable board size
  - Ability to start as X or O
- - Reactive 'action' button
 
 # Tech Stack
 Vue CDN and HTML + JS + CSS

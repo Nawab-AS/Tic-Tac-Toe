@@ -15,6 +15,10 @@ function resetBoard() {
     actionMessage.value = "Start as O";
     winningCells.value = [];
     winner.value = null;
+
+    if (currentPlayer == aiPlayer) {
+        setTimeout(aiMove, 100 + Math.random() * 200); // 100-300ms
+    }
 }
 resetBoard(); // initialize board
 

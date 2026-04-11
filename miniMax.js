@@ -11,28 +11,14 @@ function getCandidateMoves(board) {
         }
     }
 
-    if (empty.length === 0) return [];
-
-    // On larger boards, only consider empty cells next to existing moves.
-    let candidates = empty;
-    if (size >= 5 && occupied.length > 0) {
-        candidates = empty.filter(cell => {
-            for (const [r, c] of occupied) {
-                if (Math.abs(r - cell.row) <= 1 && Math.abs(c - cell.col) <= 1) return true;
-            }
-            return false;
-        });
-        if (candidates.length === 0) candidates = empty;
-    }
-
     // Prefer center-ish moves first to improve alpha-beta pruning.
-    candidates.sort((a, b) => {
+    empty.sort((a, b) => {
         const da = Math.abs(a.row - center) + Math.abs(a.col - center);
         const db = Math.abs(b.row - center) + Math.abs(b.col - center);
         return da - db;
     });
 
-    return candidates;
+    return empty;
 }
 
 function evaluateBoard(board, aiPlayer) {
@@ -80,30 +66,30 @@ function evaluateBoard(board, aiPlayer) {
     return score;
 }
 
-function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infinity, maxDepth = Infinity, deadline = Infinity) {
+function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infinity, maxDepth = Infinity, deadline = Infinity, start = Date.now()) {
     const winner = checkWin(board, false);
 
     if (winner === aiPlayer) return 10 - depth; // win
     if (winner && winner !== aiPlayer) return depth - 10; // loss
     if (board.every(row => row.every(cell => cell))) return 0; // draw
-    if (depth >= maxDepth || Date.now() > deadline) return evaluateBoard(board, aiPlayer);
+    if (depth >= maxDepth || Date.now() > deadline + start) return evaluateBoard(board, aiPlayer);
 
     const enemy = player === "X" ? "O" : "X";
     const isMaxTurn = player === aiPlayer;
-    const candidates = getCandidateMoves(board);
+    const candidates = immediateWins(board, player).concat(getCandidateMoves(board));
 
     if (isMaxTurn) {
         let bestScore = -Infinity;
 
         for (const move of candidates) {
             board[move.row][move.col] = player;
-            const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta, maxDepth, deadline);
+            const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta, maxDepth, deadline, Date.now());
             board[move.row][move.col] = "";
 
             bestScore = Math.max(bestScore, score);
             alpha = Math.max(alpha, bestScore);
 
-            if (beta <= alpha || Date.now() > deadline) return bestScore;
+            if (beta <= alpha || Date.now() > deadline/candidates.length/2 + start) return bestScore;
         }
 
         return bestScore;
@@ -113,36 +99,51 @@ function minimax(board, depth, player, aiPlayer, alpha = -Infinity, beta = Infin
 
     for (const move of candidates) {
         board[move.row][move.col] = player;
-        const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta, maxDepth, deadline);
+        const score = minimax(board, depth + 1, enemy, aiPlayer, alpha, beta, maxDepth, deadline, Date.now());
         board[move.row][move.col] = "";
 
         bestScore = Math.min(bestScore, score);
         beta = Math.min(beta, bestScore);
 
-        if (beta <= alpha || Date.now() > deadline) return bestScore;
+        if (beta <= alpha || Date.now() > deadline/candidates.length/2 + start) return bestScore;
     }
 
     return bestScore;
+}
+
+function immediateWins(board, player) {
+    const candidates = getCandidateMoves(board);
+    const winningMoves = [];
+
+    for (const move of candidates) {
+        board[move.row][move.col] = player;
+        if (checkWin(board, false) === player) {
+            winningMoves.push(move);
+        }
+        board[move.row][move.col] = "";
+    }
+
+    return winningMoves;
 }
 
 function findBestMove(board, aiPlayer, stupidity = 0) {
     const humanPlayer = aiPlayer === "X" ? "O" : "X";
     const size = board.length;
     const maxDepth = size <= 3 ? size * size : (size === 4 ? 6 : (size === 5 ? 4 : 3));
-    const timeLimitMs = 750;
-    const deadline = Date.now() + timeLimitMs;
+    const timeLimit = 1500; // 1.5 seconds
+    const start = Date.now();
     const candidates = getCandidateMoves(board);
 
     let moves = {};
 
     for (const candidate of candidates) {
         board[candidate.row][candidate.col] = aiPlayer;
-        const score = minimax(board, 0, humanPlayer, aiPlayer, -Infinity, Infinity, maxDepth, deadline);
+        const score = minimax(board, 0, humanPlayer, aiPlayer, -Infinity, Infinity, maxDepth, timeLimit, start);
         board[candidate.row][candidate.col] = "";
 
         moves[`${candidate.row},${candidate.col}`] = score;
 
-        if (Date.now() > deadline) break;
+        if (Date.now() > start + timeLimit/candidates.length) break;
     }
 
     if (Object.keys(moves).length === 0) {
